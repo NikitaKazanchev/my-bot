@@ -4,6 +4,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
 import settings
 import ephem
+import datetime
 
 logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO,
@@ -22,10 +23,17 @@ def talk_to_me(update, context):
 
 
 def planets(update, context):
-    user_planet = update.message.text.split()
-    planet = getattr(ephem, user_planet)
-    constellation = ephem.compute(planet)
-    update.message.reply_text(constellation)
+    user_planet = input('Название планеты  ').capitalize()
+    print(user_planet)
+    list_of_planets = str(ephem._libastro.builtin_planets())
+    if user_planet in list_of_planets:
+        planet = getattr(ephem, user_planet)
+        date = planet(ephem.Date(datetime.date.today()))
+        constellation = ephem.constellation(date)
+        update.message.reply_text(constellation)
+    
+    else:
+        update.message.reply_text("Такая планета мне не известна")
     
 
 def main():
@@ -40,6 +48,7 @@ def main():
     logging.info("Бот стартовал")
     mybot.start_polling()
     mybot.idle()
+
 
 if __name__ == '__main__':
     main()        
