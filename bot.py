@@ -12,18 +12,12 @@ logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',
 
 
 def greet_user(update, context):    
-    print("Вызван /start")
     update.message.reply_text('Привет, пользователь!')
 
 
-def talk_to_me(update, context):
-    user_text = update.message.text
-    print(user_text)
-    update.message.reply_text(user_text)
-
-
 def planets(update, context):
-    user_planet = input('Название планеты  ').capitalize()
+    user_planet = " ".join(context.args).capitalize()
+    update.message.reply_text(user_planet)
     print(user_planet)
     list_of_planets = str(ephem._libastro.builtin_planets())
     if user_planet in list_of_planets:
@@ -35,6 +29,12 @@ def planets(update, context):
     else:
         update.message.reply_text("Такая планета мне не известна")
     
+    
+def talk_to_me(update, context):
+    user_text = update.message.text
+    print(user_text)
+    update.message.reply_text(user_text)
+   
 
 def main():
     mybot = Updater(settings.API_KEY, use_context=True)
@@ -44,7 +44,6 @@ def main():
     dp.add_handler(CommandHandler("planet", planets))
     dp.add_handler(MessageHandler(Filters.text, talk_to_me))
     
-
     logging.info("Бот стартовал")
     mybot.start_polling()
     mybot.idle()
